@@ -1,0 +1,8 @@
+[workspace]
+
+members = [
+    "simple-solitaire-gui",
+    "simple-solitaire-lib",
+]
+
+resolver = "2"
