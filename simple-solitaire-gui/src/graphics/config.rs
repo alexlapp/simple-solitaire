@@ -42,23 +42,51 @@ impl CardConfig {
     }
 }
 
-pub(crate) struct CardInfo<'a> {
-    render_scale: f32,
-    card_config: &'a CardConfig,
+// pub(crate) struct CardInfo<'a> {
+//     render_scale: f32,
+//     card_config: &'a CardConfig,
+// }
+//
+// impl<'a> CardInfo<'a> {
+//     pub fn card_width(&self) -> f32 { self.card_config.card_width * self.render_scale }
+//     pub fn card_height(&self) -> f32 { self.card_config.card_height * self.render_scale }
+//     pub fn card_offset_x(&self) -> f32 { self.card_config.card_offset_x * self.render_scale }
+//     pub fn card_offset_y(&self) -> f32 { self.card_config.card_offset_y * self.render_scale }
+//     pub fn pile_padding_x(&self) -> f32 { self.card_config.pile_padding_x * self.render_scale }
+//     pub fn pile_padding_y(&self) -> f32 { self.card_config.pile_padding_y * self.render_scale }
+//
+//     pub fn get_piles_width(&self, pile_count: u32) -> f32 {
+//         let pile_count = pile_count as f32;
+//
+//         ((pile_count - 1.) * self.pile_padding_x()) + (pile_count * self.card_width())
+//     }
+// }
+
+pub(crate) struct CardSizes {
+    card_width: f32,
+    card_height: f32,
+    card_offset_x: f32,
+    card_offset_y: f32,
+    pile_padding_x: f32,
+    pile_padding_y: f32,
 }
 
-impl<'a> CardInfo<'a> {
-    pub fn card_width(&self) -> f32 { self.card_config.card_width * self.render_scale }
-    pub fn card_height(&self) -> f32 { self.card_config.card_height * self.render_scale }
-    pub fn card_offset_x(&self) -> f32 { self.card_config.card_offset_x * self.render_scale }
-    pub fn card_offset_y(&self,) -> f32 { self.card_config.card_offset_y * self.render_scale }
-    pub fn pile_padding_x(&self) -> f32 { self.card_config.pile_padding_x * self.render_scale }
-    pub fn pile_padding_y(&self) -> f32 { self.card_config.pile_padding_y * self.render_scale }
+impl CardSizes {
+    pub fn card_width(&self) -> f32 { self.card_width }
+    pub fn card_height(&self) -> f32 { self.card_height }
+    pub fn card_offset_x(&self) -> f32 { self.card_offset_x }
+    pub fn card_offset_y(&self) -> f32 { self.card_offset_y }
+    pub fn pile_padding_x(&self) -> f32 { self.pile_padding_x }
+    pub fn pile_padding_y(&self) -> f32 { self.pile_padding_y }
 
-    pub fn get_piles_width(&self, pile_count: u32) -> f32 {
+    pub fn calc_piles_width(&self, pile_count: u32) -> f32 {
         let pile_count = pile_count as f32;
 
-        ((pile_count - 1.) * self.pile_padding_x()) + (pile_count * self.card_width())
+        let total_spacing = (pile_count - 1.) * self.pile_padding_x;
+        let total_piles= pile_count * self.card_width;
+
+        total_spacing + total_piles
+        // ((pile_count - 1.) * self.pile_padding_x) + (pile_count * self.card_width)
     }
 }
 
@@ -69,10 +97,21 @@ pub(crate) struct RenderConfig {
 }
 
 impl RenderConfig {
-    pub(crate) fn get_card_info(&self) -> CardInfo {
-        CardInfo {
-            render_scale: self.render_scale,
-            card_config: &self.card_config,
+    // pub(crate) fn get_card_info(&self) -> CardInfo {
+    //     CardInfo {
+    //         render_scale: self.render_scale,
+    //         card_config: &self.card_config,
+    //     }
+    // }
+
+    pub(crate) fn create_card_info(&self) -> CardSizes {
+        CardSizes {
+            card_width: self.card_config.card_width * self.render_scale,
+            card_height: self.card_config.card_height * self.render_scale,
+            card_offset_x: self.card_config.card_offset_x * self.render_scale,
+            card_offset_y: self.card_config.card_offset_y * self.render_scale,
+            pile_padding_x: self.card_config.pile_padding_x * self.render_scale,
+            pile_padding_y: self.card_config.pile_padding_y * self.render_scale,
         }
     }
 

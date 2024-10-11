@@ -105,7 +105,8 @@ impl<'a> ApplicationHandler<()> for Application {
                     */
                     WindowEvent::RedrawRequested => {
                         let mut draw_context = DrawContext::from_render_config(&wgpu_state.render_config);
-                        self.app_logic.render(&mut draw_context, &wgpu_state.render_config.get_card_info());
+                        let card_info = wgpu_state.render_config.create_card_info();
+                        self.app_logic.render(&mut draw_context, &card_info);
 
                         match wgpu_state.render(&draw_context.card_instances, &draw_context.char_instances) {
                             Ok(_) => {},
@@ -142,7 +143,8 @@ impl<'a> ApplicationHandler<()> for Application {
                 };
 
                 if let Some(game_event) = game_event {
-                    let cursor = self.app_logic.update(game_event, &wgpu_state.render_config.get_card_info());
+                    let card_info = wgpu_state.render_config.create_card_info();
+                    let cursor = self.app_logic.update(game_event, &card_info);
 
                     if cursor != window.active_pointer { window.set_cursor(cursor); }
 
