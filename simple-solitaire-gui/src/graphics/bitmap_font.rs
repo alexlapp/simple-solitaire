@@ -41,7 +41,7 @@ impl BitmapFont {
                     y: parts["y"].parse().expect("Unable to parse y"),
                     width: parts["width"].parse().expect("Unable to parse width"),
                     height: parts["height"].parse().expect("Unable to parse height"),
-                    x_advance: parts["xadvance"].parse().expect("Unable to parse xadvance"),
+                    x_advance: parts["xadvance"].parse::<f32>().expect("Unable to parse xadvance") + 2.,
                     x_offset: parts["xoffset"].parse().expect("Unable to parse xoffset"),
                     y_offset: parts["yoffset"].parse().expect("Unable to parse yoffset"),
                 }
@@ -98,8 +98,8 @@ impl BitmapFont {
         for c in text.chars() {
             let sym = self.symbol_info_map.get(&(c as u32)).expect(&format!("Unexpected Character: {}", c));
             width += sym.x_advance;
-            lo_y = f32::min(lo_y, sym.y_offset);
-            hi_y = f32::max(hi_y, sym.y_offset);
+            lo_y = f32::min(lo_y, sym.height - sym.y_offset);
+            hi_y = f32::max(hi_y, sym.height - sym.y_offset);
         }
 
         if let Some(last_sym) = text

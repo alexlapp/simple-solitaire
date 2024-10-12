@@ -15,7 +15,7 @@ pub mod config;
 
 const MAX_CARD_INSTANCES: usize = 512;
 const MAX_TEXT_INSTANCES: usize = 512;
-const CLEAR_COLOR: wgpu::Color = wgpu::Color { r: 0.1, g: 0.2, b: 0.3, a: 1.0 };
+const CLEAR_COLOR: wgpu::Color = wgpu::Color { r: 22. / 255., g: 128. / 255., b: 17. / 255., a: 1.0 };
 
 pub const OPENGL_TO_WGPU_MATRIX: glam::f32::Mat4 = glam::f32::Mat4::from_cols_array(&[
     1.0, 0.0, 0.0, 0.0,
@@ -256,7 +256,7 @@ impl WgpuState {
         let render_config = RenderConfig {
             card_config,
             bitmap_font,
-            render_scale: 2.,
+            render_scale: 2., // TODO: Scale mouse cursor based on this?
         };
 
         let card_bind_group = device.create_bind_group(&wgpu::BindGroupDescriptor {
@@ -459,6 +459,21 @@ impl WgpuState {
         let raw = text_instances.iter().map(Instance::to_raw).collect::<Vec<_>>();
         self.queue.write_buffer(&self.text_instance_buffer, 0 as wgpu::BufferAddress, bytemuck::cast_slice(&raw));
 
+        // TODO: Move this to a cached value on wgpu state or render config
+        let r = 22. / 255.;
+        let g = 128. / 255.;
+        let b = 17. / 255.;
+
+        let f = |x: f64| {
+            if x > 0.04045 {
+                ((x + 0.055) / 1.055).powf(2.4)
+            } else {
+                x / 12.92
+            }
+        };
+
+        let clear_color = wgpu::Color { r: f(r), g: f(g), b: f(b), a: 1.0 };
+
         {
             let mut render_pass = encoder.begin_render_pass(&wgpu::RenderPassDescriptor {
                 label: Some("Render Pass"),
@@ -466,7 +481,7 @@ impl WgpuState {
                     view: &view,
                     resolve_target: None,
                     ops: wgpu::Operations {
-                        load: wgpu::LoadOp::Clear(CLEAR_COLOR),
+                        load: wgpu::LoadOp::Clear(clear_color),
                         store: wgpu::StoreOp::Store,
                     },
                 })],

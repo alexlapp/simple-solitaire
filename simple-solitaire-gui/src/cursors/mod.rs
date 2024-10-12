@@ -44,6 +44,8 @@ pub struct SolitaireCursors {
 
 impl ScalableCursor {
     fn create(scale_factor: f64, bytes: &[u8], size: (u16, u16), hotspot: (u16, u16), event_loop: &winit::event_loop::ActiveEventLoop) -> Self {
+        // TODO: Maybe scale mouse like this? So mouse size stays in line with card size
+        // let scale_factor = scale_factor * ( render_config.scale / 2.);
         let dyn_image = image::load_from_memory(bytes).expect("Bytes should represent valid cursor");
         let info = CursorInfo {
             image: dyn_image,

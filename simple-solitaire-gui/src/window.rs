@@ -143,8 +143,10 @@ impl<'a> ApplicationHandler<()> for Application {
                 };
 
                 if let Some(game_event) = game_event {
+                    // TODO: Find a clean way to get sizing info in update without a draw_context
+                    let draw_context = DrawContext::from_render_config(&wgpu_state.render_config);
                     let card_info = wgpu_state.render_config.create_card_info();
-                    let cursor = self.app_logic.update(game_event, &card_info);
+                    let cursor = self.app_logic.update(game_event, &card_info, &draw_context);
 
                     if cursor != window.active_pointer { window.set_cursor(cursor); }
 

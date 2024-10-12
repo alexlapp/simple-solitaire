@@ -27,7 +27,7 @@ impl CardConfig {
         }
     }
 
-    pub fn instance(&self, x: f32, y: f32, card_x: u32, card_y: u32) -> Instance {
+    pub fn instance(&self, x: f32, y: f32, card_x: u8, card_y: u8) -> Instance {
         let upper_left_x = card_x as f32 * self.card_width;
         let upper_left_y = card_y as f32 * self.card_height;
 
